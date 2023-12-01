@@ -1,0 +1,1 @@
+buying-a-property-in-malta
