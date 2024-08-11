@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Hello World
+title: Writing out ideas
 lead: My main interests and what you could expect.
 ---
 
