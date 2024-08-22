@@ -8,7 +8,7 @@ title: Home
 Hi there, I'm Daniel, and here's a bit about me:
 
 - 👨‍💻 I have a passion for Machine Learning, and I'm always eager to explore its ever-growing number of possibilities.
-- 🌐 I work at [SmartCow](smartcow.ai), where I enjoy crafting APIs and creating applications in Edge AI industry.
+- 🌐 I work at [SmartCow](smartcow.ai), an Nvidia partner manufacturing Edge devices. My day to day involves collecting data created by AI models and make it available through an API.
 - 🏋️ I'm an advocate for an active lifestyle. You can often find me hitting the gym or going for a refreshing run to keep both my body and mind in shape.
 - ☕ A coffee enthusiast. A good cup of coffee can make any day better.
 - 📈 I'm also keen on analyzing companies and the stock market. It's fascinating to consider investment opportunities.
