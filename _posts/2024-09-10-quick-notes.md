@@ -1,3 +1,9 @@
+---
+layout: post
+title: Notes on tools I often use
+lead: A quick reference to tools I often use and other tips that I want to keep note of.
+---
+
 # Quick notes and tools I often use
 
 I intend to keep this page as a quick reference to tools I often use and other tips that I find useful. I'll keep updating it as I go along.
@@ -64,6 +70,7 @@ For the value of TYPE, please use one of feat, fix, docs, style, refactor, perf 
 > The json and jsonb data types accept almost identical sets of values as input. The major practical difference is one of efficiency. The json data type stores an exact copy of the input text,
 which processing functions must reparse on each execution; while jsonb data is stored in a decomposed binary format that makes it slightly slower to input due to added conversion overhead, but
 significantly faster to process, since no reparsing is needed. jsonb also supports indexing, which can be a significant advantage.
+
 ref: https://www.postgresql.org/docs/current/datatype-json.html#DATATYPE-JSON
 
 > In general, most applications should prefer to store JSON data as jsonb, unless there are quite specialized needs, such as legacy assumptions about ordering of object keys.
