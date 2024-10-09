@@ -66,11 +66,26 @@ For the value of TYPE, please use one of feat, fix, docs, style, refactor, perf 
 ```
 
 ## Postgres
+### TimescaleDB vs Clickhouse
+**Clickhouse Advantages**
+ - Clickhouse is able to ingest data faster than TimescaleDB.
+ - Clickhouse is particularly good at running queries with complex grouping aggregations
+
+**TimescaleDB Advantages**
+ - TimescaleDB is better performing at running nearly all other queries
+ - Clickhouse consumes more storage space, particularly on smaller batch sizes of 100-300 rows
+ - TimescaleDB uses standard SQL syntax, while Clickhouse uses its own SQL dialect
+ - Better suited at modifying or deleteing data
+
 ### JSONB vs JSON
 > The json and jsonb data types accept almost identical sets of values as input. The major practical difference is one of efficiency. The json data type stores an exact copy of the input text,
 which processing functions must reparse on each execution; while jsonb data is stored in a decomposed binary format that makes it slightly slower to input due to added conversion overhead, but
 significantly faster to process, since no reparsing is needed. jsonb also supports indexing, which can be a significant advantage.
 
-ref: https://www.postgresql.org/docs/current/datatype-json.html#DATATYPE-JSON
+ref: [Postgres JSON Datatypes](https://www.postgresql.org/docs/current/datatype-json.html#DATATYPE-JSON)
 
 > In general, most applications should prefer to store JSON data as jsonb, unless there are quite specialized needs, such as legacy assumptions about ordering of object keys.
+
+## Python
+### Python Readiness
+[Py Readiness](https://pyreadiness.org/) is a Python support graph for specific Python versions for the most popular Python packages!
