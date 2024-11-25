@@ -4,7 +4,7 @@ title: Notes on tools I often use
 lead: A quick reference to tools I often use and other tips that I want to keep note of.
 ---
 
-# Quick notes and tools I often use
+# Reference to common tools
 
 I intend to keep this page as a quick reference to tools I often use and other tips that I find useful. I'll keep updating it as I go along.
 
@@ -41,13 +41,26 @@ When creating a Dockerfile, you need to choose a base image. There are many base
 
 ### Convert Windows line endings (CRLF to LF)
 
-If you have team mates working on Windows, first, ask them to configure their editor to use LF line endings. If that's not possible, you can use the following command to convert CRLF to LF in any bash script added to Docker:
+If you have colleagues working with Windows, first, ideally they can configure their editor to use LF line endings. If that's not possible, you can use the following command to convert CRLF to LF in any bash script added to Docker:
 
 Example: Convert line endings and make the script executable in a Dockerfile
 ```bash
 RUN sed -i 's/\r$//g' /entrypoint.sh \
     && chmod +x /entrypoint.sh
 ```
+
+### Using docker without sudo (Linux)
+
+If you're tired of typing `sudo` before every docker command, you can add your user to the docker group. This way, you can run docker commands without sudo.
+```bash
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+```
+
+**Why is sudo required?** 
+
+The Docker daemon binds to a Unix socket instead of a TCP port. By default, this Unix socket is owned by the user root and other users can only access it using sudo. The docker group grants privileges equivalent to the root user.
+Ref: [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 ## GIT
 ### Conventional commits
