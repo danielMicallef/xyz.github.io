@@ -1,120 +1,126 @@
 ---
 layout: post
-title: Strategies for scaling your Database
-lead: 7 different approaches to handling larger amounts of data
+title: Database Scaling Patterns
+lead: Different approaches for managing database growth
 ---
 
-Most applications start out with a single Postgres or MySQL docker image acting as the database. This enables developers to quickly
-create a POC, and test the idea in the market. A large number of applications created will never reach the threshold where the number of
-requests will overwhelm the database. For the few which end up facing this positive problem, different scaling techniques will become a
-requirement before users start turning away due to slow response times or even database crashes.
+When we build applications, we typically start simple - a single database instance serves our needs well. I've seen many projects begin with a basic PostgreSQL or MySQL setup, containerized for convenience. This approach works perfectly fine for many applications, and truth be told, most applications won't outgrow this setup.
 
-Below I have created a list of 7 different techniques to keep in mind when scaling is required. For most of the applications I create I
-start off with a Postgres DB. For this reason, we will often reference PostgreSQL and their documentation below.
+But what happens when you do hit those scaling limits? In this article, I'll explore several patterns that have worked successfully for me to handle database growth. While I'll use PostgreSQL in my examples (as it's what I work with most), these patterns are broadly applicable across different database technologies.
 
-## Indexes
+# The Index Pattern
 
-The most straight forward way to improve response times for evergrowing tables is to introduce indexes.
+The most fundamental pattern for improving query performance is Indexing. At its core, an index is a data structure that provides a fast path to rows in a table.
 
-Example of creating a B-Tree index:
 ```sql
 CREATE INDEX name ON table USING BTREE (column);
 ```
-[Ref: Create Index](https://www.postgresql.org/docs/current/sql-createindex.html)
 
-Relational databases today offer different [types of indexes](https://www.postgresql.org/docs/17/indexes-types.html). Postgres for example provides the `B-Tree`, `Hash`,
-`GiST`, `SP-GiST`, `GIN` and `BRIN`. The index type to use depends on the nature of the data stored in the particular column. Having said that, the most common index type
-(and the default in postgres) is the B-Tree. The B-Tree keeps data sorted making it easier to find the record you're looking for. It is particularly effective in range
-queries. The worst (and average) time for a B-Tree search is `O(log n)`. Without and index the worst case would be a full table scan, a very time consuming operation with
-ever growing tables.
+Whilst there are different [types of indexes](https://www.postgresql.org/docs/17/indexes-types.html), the most common (and default) implementation is the B-Tree index, which maintains data in a sorted tree structure. Think of it like a well-organized library with numbered shelves. Instead of checking every book one by one (like a full table scan), the library has a series of signs at different levels:
 
-![BTree image from https://en.wikipedia.org/wiki/File:Btree_index.PNG](/assets/posts/png/bree_index.png "B-Tree Example")
+- Main floor sign: "Books 1-1000 left wing, 1001-2000 right wing"
+- Wing signs: "Books 1-500 first aisle, 501-1000 second aisle"
+- Aisle signs: "Books 1-100 top shelf, 101-200 middle shelf..."
 
-### Things to keep in mind
+When you want to find book #200, you:
+1. Check main sign -> go left wing
+2. Check wing sign -> go first aisle
+3. Check aisle sign -> go middle shelf
+4. Find #200 in that section
 
- - On every write operation the index has to be updated. This means that write operations are slowed down with every new index created. Ideally only create indexes on fields used particularly often to filter by.
+![BTree Visualization](/assets/posts/png/bree_index.png "B-Tree Example")
 
-## Denormalization
+This hierarchical organization means you can quickly find any book number, including ranges (like "all books between 350-400") without checking every single book. You're making just a few decisions at each level to narrow down your search area, which is why it's logarithmic - O(log n) - rather than linear - O(n).
 
-Without any prior knowledge of the queries which will be mostly used, it is ideal to normalize the database. However sometimes you will realise that
- some queries are being executed very often. When such queries contain expensive joins, you can either:
-  - Add an index to the specific columns you will be joining upon (since indexes help the database quickly locate matching rows)
-  - Store redundant data in the table in order to reduce the complexity of queries.
+## When to Use It
+The Index Pattern is most effective when you have specific columns that are frequently used in WHERE clauses. It is sometimes also effective on JOIN conditions (although not necessarily). Query performance, especially for larger tables, can be significantly improved simply by adding the right indexes.
 
-### When to store redundant data
+## Trade-offs
+The main trade-off with indexes is write performance. Each index needs to be updated whenever you modify the underlying data. So of course, be selective about indexing - don't just index everything.
 
-If you have large tables where a large percentage of rows match the join condition, the database might decide a full table scan is more efficient.
+# The Denormalization Pattern
 
-Consdier the example below:
-![BTree image from https://en.wikipedia.org/wiki/File:Btree_index.PNG](/assets/posts/png/denormalization.png "Denormalization")
+While database normalization is generally good practice, sometimes we need to deliberately denormalize for performance. I call this the Denormalization Pattern.
 
-Lets' assume thousands of car rides happen every day and our drivers want to load a list of car rides for analytical purposes. To avoid joining tables, we can simply add the driver and customer details which are used for this query and our new query will be a simple filter by an indexed column.
+![Denormalization Example](/assets/posts/png/denormalization.png "Denormalization")
 
-### Things to keep in mind
+## When to Use It
+Consider this pattern when:
+- You have frequently-executed queries that require expensive joins
+- The joined data changes infrequently
+- Query performance is more critical than storage efficiency
 
-- Update data carefully. In the example above, if the drivers' phone number is updated, we need to carefully update both the Driver table and Car Ride table.
-- Storage requirements can start growing heavily. For this reason this method should only be used when the join is required very often.
+## Trade-offs
+The main complexity comes from maintaining data consistency. When you update the source data, you need to ensure all denormalized copies are updated too. This isn't just a technical challenge - it's an organizational one, as teams need to be aware of these dependencies.
 
-## Caching
+# The Caching Pattern
 
-On other occassions, the same data is accessed very frequently. Therefore to avoid database load, especially during heavy usage, we can introduce a
-caching layer, for example by using Redis, or in-application cache. The cached data will have a very low response time, whilst the reduction in load on the database will speed
-up response time of other queries as well.
+The Caching Pattern introduces a fast, intermediate storage layer between your application and database. Redis is a popular choice for this pattern, though in-memory application caches can work too.
 
-### Things to keep in mind
+## When to Use It
+This pattern shines when:
+- The same data is repeatedly requested
+- Data can be slightly stale without causing problems
+- You need to reduce database load during high-traffic periods
 
-- Cache invalidation need to be planned and taken care of (either by introducing an event-driven invalidation, or a time-based invalidation). This will
-ensure that the user will always see fresh data.
+## Trade-offs
+Cache invalidation is the classic challenge here. Remember Phil Karltons' saying? "There are only two hard things in Computer Science: cache invalidation and naming things."
 
+# The Partitioning Pattern
 
-## Partitioning
+Partitioning is about breaking a large table into smaller, more manageable pieces. There are two main variants:
 
-Partitioning refers to splitting the data inside what is logically one table into separate (smaller) physical pieces.
-A table can be partitioned into 2 different ways:
- - Vertical Partitioning: divide the table by column;
- - Horizontal Partitioning: divide the table by row using a specific field (called the partition key);
+## Vertical Partitioning
+This splits tables by columns. While PostgreSQL doesn't directly support this, you can achieve it through careful normalization. So when should we normalize and when should we denormalize? Look at your most expensive queries. If only a few columns are required from a table, normalizing your tables (and having the rare JOIN on occassion) will be more performant for your application.
 
-### Veritcal Partitioning
-Vertical Partitioning is not supported out of the box in Postgres, however the behaviour can be mimicked by
-normalizing a table further. Sometimes a specific group of fields are retrieved way more often then other
-fields. Hence seperating the frequently queried fields into a seperate table can enhance performance.
+## Horizontal Partitioning
+This splits tables by rows, usually based on a partition key. PostgreSQL supports this natively:
 
-### Horizontal Partitioning
-
-Postgres offers built-in horizontal [partitioning](https://www.postgresql.org/docs/current/ddl-partitioning.html) methods, including Range,
-List and Hash partitioning. Splitting the table by range, for example means that every partition will contain a
-range of non-overlapping values of the partition key. For example users can be partitioned by age.
-
-[Example of creating a table partitioned by range.](https://www.postgresql.org/docs/current/ddl-partitioning.html#DDL-PARTITIONING-DECLARATIVE-EXAMPLE):
-```
+```sql
 CREATE TABLE user (
-    user_id         int not null,
-    created         date not null,
-    age             int,
-    name            varchar(255)
+    user_id     int not null,
+    created     date not null,
+    age         int,
+    name        varchar(255)
 ) PARTITION BY RANGE (age);
 ```
 
-## Sharding
-Sharding is a form of horizontal scaling where a server is responsible for one partition of a table. Just like
-partitions are split by a specific column (the partition key), sharding normally involves splitting the data by
-the shard key. In PostgreSQL sharding is not natively implemented, but extensions like
-[Citus](https://www.citusdata.com/getting-started/) make it possible.
+# The Sharding Pattern
 
-## Vertical Scaling
+Sharding takes partitioning to the next level by distributing data across multiple servers. While PostgreSQL doesn't provide this out-of-box, tools like Citus make it possible.
 
-Vertical scaling is the simplest way to scale a database and the most immediate results. It is basically about adding more resources (CPU, Storage, Memory)
-to the server so that it is able to handle more load.
+## When to Use It
+Consider sharding when:
+- You've exceeded the capacity of a single server
+- Your data can be cleanly partitioned by a shard key
+- You need horizontal scalability
 
-- Relatively straightforward to implement since it does not require any changes to the database architecture.
+## Trade-offs
+Sharding adds significant complexity to your system. Cross-shard queries become challenging, and you need to carefully consider your sharding strategy.
 
-### Side note
+# The Vertical Scaling Pattern
 
-- There is often a hard limit to how much this can be applied (either due to financial or physical issues)
-- Scaling vertically means there is no redundancy and still 1 single point of failure.
+Sometimes the simplest solution is to just add more resources to your existing database server. More often then not this is one of the first solutions to go to, before taking a look at more complex ones.
 
-## Other options
-### Materialized Views
-Sometimes you need to transform your data with complex queries, before you're able to use it to extract reports etc. It may be ideal to precompute
-these complex queries and store them in new tables (possibly external to the database itself) for faster access. When using this method, keep in
-mind that data has to be refreshed, and when it is, it can be a heavy operation on the database.
+## Trade-offs
+While simple to implement, this pattern has clear limitations:
+- Cost increases can be substantial
+- Hardware limits eventually become a barrier
+- You still have a single point of failure
+
+# The Materialized View Pattern
+
+This pattern involves pre-computing complex queries and storing the results. It's particularly useful for reporting and analytics scenarios where real-time data isn't critical.
+
+## When to Use It
+Consider this pattern when:
+- You have complex queries that run frequently
+- The underlying data changes infrequently
+- You can tolerate some data staleness
+
+## Trade-offs
+The main challenge is managing the refresh cycle - when to update the materialized view and how to handle the load during updates.
+
+# Conclusion
+
+Each of these patterns has its place in your database scaling toolkit. The key is understanding their trade-offs and choosing the right combination for your specific needs. In my experience, successful database scaling usually involves applying several of these patterns together, guided by careful observation of your application's actual usage patterns.
