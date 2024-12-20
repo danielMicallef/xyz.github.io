@@ -5,6 +5,9 @@ title: Home
 
 # About
 
+A personal blog by Daniel Micallef focusing on Python programming, machine learning, fitness, coffee, stock market analysis
+and hosting experiences in Gozo. The blog shares insights, tools and personal interests.
+
 Hi there, I'm Daniel, and here's a bit about me:
 
 - 👨‍💻 I have a passion for Machine Learning, and I'm always eager to explore its ever-growing number of possibilities.
