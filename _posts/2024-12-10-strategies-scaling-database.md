@@ -12,11 +12,15 @@ But what happens when you do hit those scaling limits? In this article, I'll exp
 
 The most fundamental pattern for improving query performance is Indexing. At its core, an index is a data structure that provides a fast path to rows in a table.
 
+Creating an Index in <a href="https://www.postgresql.org/docs/current/sql-createindex.html" target="_blank" rel="nofollow noopener noreferrer">Postgres</a>
+
 ```sql
-CREATE INDEX name ON table USING BTREE (column);
+CREATE INDEX name
+ON table
+USING BTREE (column);
 ```
 
-Whilst there are different [types of indexes](https://www.postgresql.org/docs/17/indexes-types.html), the most common (and default) implementation is the B-Tree index, which maintains data in a sorted tree structure. Think of it like a well-organized library with numbered shelves. Instead of checking every book one by one (like a full table scan), the library has a series of signs at different levels:
+Whilst there are different <a href="https://www.postgresql.org/docs/17/indexes-types.html" target="_blank" rel="nofollow noopener noreferrer">types of indexes</a>, the most common (and default) implementation is the B-Tree index, which maintains data in a sorted tree structure. Think of it like a well-organized library with numbered shelves. Instead of checking every book one by one (like a full table scan), the library has a series of signs at different levels:
 
 - Main floor sign: "Books 1-1000 left wing, 1001-2000 right wing"
 - Wing signs: "Books 1-500 first aisle, 501-1000 second aisle"
@@ -28,9 +32,10 @@ When you want to find book #200, you:
 3. Check aisle sign -> go middle shelf
 4. Find #200 in that section
 
-![BTree Visualization](/assets/posts/png/bree_index.png "B-Tree Example")
-
 This hierarchical organization means you can quickly find any book number, including ranges (like "all books between 350-400") without checking every single book. You're making just a few decisions at each level to narrow down your search area, which is why it's logarithmic - O(log n) - rather than linear - O(n).
+
+The following is an illustration from <a href="https://en.wikipedia.org/wiki/File:Btree_index.PNG" target="_blank" rel="nofollow noopener noreferrer">Wikipedia</a>:
+![BTree Visualization](/assets/posts/png/btree.png "B-Tree Example")
 
 ## When to Use It
 The Index Pattern is most effective when you have specific columns that are frequently used in WHERE clauses. It is sometimes also effective on JOIN conditions (although not necessarily). Query performance, especially for larger tables, can be significantly improved simply by adding the right indexes.
@@ -40,7 +45,9 @@ The main trade-off with indexes is write performance. Each index needs to be upd
 
 # The Denormalization Pattern
 
-While database normalization is generally good practice, sometimes we need to deliberately denormalize for performance. I call this the Denormalization Pattern.
+While database normalization is generally good practice, sometimes we need to deliberately denormalize for performance. Consider the example below. Assuming that
+we show a table for all our customers with their car rides, and the table will contain driver information and the name they booked under, it may make sense to add
+this data to the CarRide table, making all data readily available with a filter.
 
 ![Denormalization Example](/assets/posts/png/denormalization.png "Denormalization")
 
@@ -55,7 +62,8 @@ The main complexity comes from maintaining data consistency. When you update the
 
 # The Caching Pattern
 
-The Caching Pattern introduces a fast, intermediate storage layer between your application and database. Redis is a popular choice for this pattern, though in-memory application caches can work too.
+The Caching Pattern introduces a fast, intermediate storage layer between your application and database. Redis is a popular choice for this pattern, though in-memory application caches can work too. Caching
+may be an alternative to denormalization in the example above.
 
 ## When to Use It
 This pattern shines when:
@@ -64,7 +72,7 @@ This pattern shines when:
 - You need to reduce database load during high-traffic periods
 
 ## Trade-offs
-Cache invalidation is the classic challenge here. Remember Phil Karltons' saying? "There are only two hard things in Computer Science: cache invalidation and naming things."
+Cache invalidation is the classic challenge here. Remember Phil Karltons? "There are only two hard things in Computer Science: cache invalidation and naming things."
 
 # The Partitioning Pattern
 

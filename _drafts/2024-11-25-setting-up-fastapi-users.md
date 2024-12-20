@@ -1,4 +1,5 @@
 ---
+draft: true
 layout: post
 title: FastAPI Users
 lead: Step by Step setup of FastAPI Users
@@ -28,7 +29,7 @@ To install FastAPI Users, assuming we are going to use SQLAlchemy, run the follo
 
 ```bash
 pip install 'fastapi-users[sqlalchemy]'
-``` 
+```
 
 ## Step 2: Create a User Model
 
@@ -55,8 +56,8 @@ async def get_session() -> AsyncSession:
     async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
     async with async_session_maker() as session:
         yield session
-        
-    
+
+
 async def get_user_db(session: AsyncSession = Depends(get_session)):
     yield SQLAlchemyUserDatabase(session, User)
 ```
