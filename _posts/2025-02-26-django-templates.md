@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: Why *Two Scoops of Django* Recommends a Standalone Templates Folder
