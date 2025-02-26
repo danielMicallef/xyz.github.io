@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Is it a good company?
+title: Check these before buying that stock
 lead: My checkboxes before buying shares of a company.
 ---
 
