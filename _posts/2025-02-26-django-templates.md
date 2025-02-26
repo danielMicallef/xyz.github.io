@@ -1,4 +1,8 @@
-# Why *Two Scoops of Django* Recommends a Standalone Templates Folder
+---
+layout: post
+title: Why *Two Scoops of Django* Recommends a Standalone Templates Folder
+lead: Structuring Django Template folder
+---
 
 When structuring a Django project, the book *Two Scoops of Django* suggests placing all templates in a standalone `templates` folder at the project root, rather than scattering them across individual app directories. The recommended structure looks something like this:
 ```text
