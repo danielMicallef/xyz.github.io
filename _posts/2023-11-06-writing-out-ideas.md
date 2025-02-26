@@ -4,6 +4,7 @@ title: Writing out ideas
 lead: My main interests and what you could expect.
 ---
 
-Let's start with a quick one! The blogs here are expected to be a set of jumbled ideas from various fields I'm interested in. They will be more on the line of personal notes which should help me get into a subject quickly in the future.
+I created a blog section to this portfolio site in order to write down and have a quick reference to different topics I'm working with or come across. So expect the
+blog to be a set of jumbled ideas from various fields I'm interested in. These personal notes should help me and others get into a subject quickly in the future.
 
-My main interests are Software Development, Finance and Financial Markets, Training and Nutrition, and ... Coffee. I'll probably stick to these for most of the time.
+For reference my main interests are Software Development, Finance and Financial Markets, Training and Nutrition, and ... Coffee. I'll probably stick to these for most of the time.
