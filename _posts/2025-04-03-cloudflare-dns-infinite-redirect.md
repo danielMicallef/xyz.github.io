@@ -3,15 +3,46 @@ layout: post
 title: Fixing Cloudflare-Nginx Infinite Redirect Loops
 lead: Encountered endless redirects after setting up Cloudflare with Nginx. This is why your SSL configuration creates this frustrating loop and how to solve it in two simple ways.
 ---
-# Infinite Redirect Loop after Cloudflare DNS Proxy activation
+## Context
 
 When integrating Cloudflare's DNS proxy with Nginx, you might encounter an unexpected infinite redirect loop. I recently faced this issue and want to document the cause and solution for future reference.
 
 ## The Problem
 
-After setting up a proxied DNS record to my Nginx server, I encountered an endless 301 redirect loop. This happened because of a conflict between my SSL configuration choices.
+After setting up a proxied DNS record to my Nginx server, I encountered an endless 301 redirect loop. This happened because of a conflict between my Cloudflare SSL configuration choices.
 
-## Why This Happens
+### NGINX Config
+
+As shown below every http request is redirected to https in my Nginx setup.
+
+```nginx
+server {
+    listen          80;
+    listen          [::]:80;
+    server_name     ${PUBLIC_DOMAIN};
+
+    return 301 https://${PUBLIC_DOMAIN}$request_uri;
+}
+
+server {
+    listen          443 ssl default_server;
+    ...
+}
+```
+
+### Cloudflare SSL/TLS Settings
+
+Cloudflare, when using its proxy, has a few SSL settings of its own.
+
+ - `Off`: No encryption is applied. Https is disabled
+ - `Flexible`: Encryption is enabled between the visitor and Cloudflare, however all connections between Cloudflare and your server are made through HTTP.
+ - `Full`: Enables encryption end-to-end. Your certificate does not need to be a publicly trusted certificate.
+ - `Full (Strict)`: Encryption is enabled end-to-end, and your certificate is validated.
+ - `Strict (SSL-Only Origin Pull)`: Enforces encryption between Cloudflare and your server, regardless of your visitor's request.
+
+ The default is "Flexible". This means that all requests are sent from Cloudflare to the server unencrypted.
+
+## What Happens
 
 The redirect loop occurs due to this sequence:
 
