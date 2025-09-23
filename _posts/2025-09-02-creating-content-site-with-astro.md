@@ -1,38 +1,46 @@
 ---
 layout: post
-title: "From High Fees to High Hopes: Building a Direct Booking Site with Astro"
-lead: "How I built a direct booking website for my short-term rental, Seaview Apartment Xlendi, to save on hefty commission fees and learn a new framework in the process."
+title: "Tired of High Booking Fees- So I Built My Own Direct Booking Site."
+lead: "Booking platforms eat at a large portion of short term rental profits. So I built my own website for my rental, Seaview Apartment Xlendi. It should save me money and give me a direct connection with my guests. Here's my story."
 ---
 
-For the past three years, I've been renting out my apartment in the seaside village of Xlendi, Gozo. While platforms like Airbnb and Booking.com have been great for visibility, the 15-25% commission fees have always been a tough pill to swallow. As a software developer, I knew I could create a better, more cost-effective solution: a direct booking website.
+For three years, I've loved renting out my apartment in Xlendi, Gozo. While platforms like Airbnb and Booking.com are great for visibility, I hated the ever-increasing hefty commission they charge for each booking (15 -25%).
 
-## The Numbers Don't Lie
+It felt like I was losing a huge chunk of my hard-earned money for just a listing. As a software developer, I knew there was a better way: a direct booking website.
 
-Let's break down the potential savings. My apartment is booked approximately 50% of the year, which translates to:
+## The Math Just Makes Sense
 
-- **2023:** 185 Nights (50.7%)
-- **2024:** 206 Nights (56.4%)
-- **2025 (so far):** 165+ Nights (45%)
+Let's talk numbers. The savings are real.
 
-With an average stay of 4 nights at €92 per night, a typical booking generates €360 in revenue. A 15-25% commission on that is a significant chunk of change. By securing just one direct booking every couple of months, I could save €300-€400 a year. It is definitly not much, but it's a rewarding return for a side project.
+My apartment is booked for around half the year. For an average 4-night stay, the guests will pay around €350 - €400. Booking platforms take up to €100 from that single booking.
 
-## Getting the Word Out
+By getting just a few direct bookings, I save hundreds of euros a year. It's not just about the money; it's about building a sustainable business, one guest at a time.
 
-A website is only as good as its traffic. In the first week after launching, Google Analytics showed a promising trickle of visitors. The primary sources have been:
+## How Do Guests Find Me?
 
-- **Google Business Profile:** A must-have for any local business.
-- **Direct Searches:** Guests finding the apartment on booking platforms and then searching for it directly to avoid fees.
+A website is useless if no one sees it. In the first week, people started finding the site. Here’s how:
 
-In the future, I plan to explore more proactive marketing strategies, such as targeted ads on Google and Facebook, and building a social media presence to drive more organic traffic.
+- **Google Business Profile:** This is essential for any local business.
+- **Direct Searches:** Some guests, find my apartment on big platforms, then search for it directly to get a better price.
 
-## A Learning Opportunity: Discovering Astro
+Next, I'll look into targeted ads and social media to bring in more visitors.
 
-This project wasn't just about saving money; it was also a chance to learn a new technology. I chose [Astro](https://astro.build/), a modern web framework that has been gaining a lot of traction. I was particularly drawn to its "island architecture," which allows you to build most of your site with static, content-focused components, and then "hydrate" small, interactive parts with your favorite UI framework (like React, Vue, or Svelte). This results in incredibly fast websites, which is a huge plus for user experience and SEO.
+## Why I Chose Astro
+
+This project was also a chance to learn something new. I picked [Astro](https://astro.build/), a modern web framework.
+
+I chose it for one big reason: **speed**.
+
+Astro helps build incredibly fast websites. This means a better experience for my guests and a nice boost for my Google search ranking. It lets me build a simple, content-focused site that just works.
+
+Hosting it on Cloudflare Pages, means that I'll also get some advantages from Cloudflares' caching.
+
+I'd love for you to take a look at [Seaview Apartment Xlendi](https://seaviewapartmentxlendi.com/) and get back to me with some improvements.
 
 ## What's Next?
 
-The journey doesn't end here. I have two main goals for the future of this project:
+This is just the beginning. Here is the roadmap:
 
-1. **Improve UI/UX**: The goal till now was to have something shipped and available for upcoming guests. Going forward we'll need to do some extra work on the user interface to make [Seaview Apartment Xlendi](https://seaviewapartmentxlendi.com/) easier to navigate. 
-2. **Themable and Dynamic:** I want to transform the website into a reusable theme where all content, including photos and property details, is fetched dynamically. This would allow me to quickly launch similar sites for other hosts who want to build a direct relationship with their guests.
-3.  **Booking API Integration:** The ultimate goal is to add a fully-fledged booking engine. This would involve syncing calendars with other platforms to avoid double bookings and allowing guests to book and pay directly on the site. A seamless booking process is key to boosting conversion rates.
+- **Make it Beautiful:** The current design is simple. I want to improve the user experience to make booking a breeze.
+- **Make it Reusable:** I plan to turn this site into a theme. Other hosts could use it to launch their own direct booking sites quickly.
+- **Add a Booking Engine:** The final goal is a full booking system. It will sync calendars with other platforms and let guests pay directly on the site. A smooth process means more happy guests.
