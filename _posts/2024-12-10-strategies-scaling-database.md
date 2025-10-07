@@ -6,7 +6,16 @@ lead: Different approaches for managing database growth
 
 When we build applications, we typically start simple - a single database instance serves our needs well. I've seen many projects begin with a basic PostgreSQL or MySQL setup, containerized for convenience. This approach works perfectly fine for many applications, and truth be told, most applications won't outgrow this setup.
 
-But what happens when you do hit those scaling limits? In this article, I'll explore several patterns that have worked successfully for me to handle database growth. While I'll use PostgreSQL in my examples (as it's what I work with most), these patterns are broadly applicable across different database technologies.
+But what happens when you do hit those scaling limits? In this post, I'll explore several patterns that have worked successfully for me to handle database growth, together with some others I've never really tried. While I'll use PostgreSQL in my examples (as it's what I work with most), these patterns are broadly applicable across different database technologies.
+
+## Patterns
+
+- [Indexing your database](#the-index-pattern)
+- [Denormalization](#the-denormalization-pattern)
+- [Caching](#the-caching-pattern)
+- [Partitioning](#the-partitioning-pattern)
+    - [Vertical Partitioning](#vertical-partitioning)
+    - [Horizontal Partitioning](#horizontal-partitioning)
 
 # The Index Pattern
 
