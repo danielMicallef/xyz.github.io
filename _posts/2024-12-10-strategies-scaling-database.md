@@ -16,6 +16,8 @@ But what happens when you do hit those scaling limits? In this post, I'll explor
 - [Partitioning](#the-partitioning-pattern)
     - [Vertical Partitioning](#vertical-partitioning)
     - [Horizontal Partitioning](#horizontal-partitioning)
+- [Sharding](#the-sharding-pattern)
+- [Scaling](#the-vertical-scaling-pattern)
 
 # The Index Pattern
 
@@ -95,12 +97,18 @@ This splits tables by rows, usually based on a partition key. PostgreSQL support
 
 ```sql
 CREATE TABLE user (
-    user_id     int not null,
-    created     date not null,
-    age         int,
-    name        varchar(255)
-) PARTITION BY RANGE (age);
+    user_id int NOT NULL,
+    created date NOT NULL,
+    dob date,
+    name varchar(255)
+) PARTITION BY RANGE (YEAR(dob));
 ```
+
+Above the user table is partitioned by year of birth. Choose a column which is:
+
+ - Frequently used in queries
+ - Has a low number of unique values (low cardinality)
+ - Avoid columns with constantly changing values
 
 # The Sharding Pattern
 
